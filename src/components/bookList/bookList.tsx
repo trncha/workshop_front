@@ -6,7 +6,7 @@ const BookList = async () => {
 
 	return (
 		<div className="container mx-auto">
-			<h1 className="text-4xl font-light mb-8 text-gray-700">Book List V1</h1>
+			<h1 className="text-4xl font-light mb-8 text-gray-700">Book List Version: latest</h1>
 			{books.responseData.map((book: { id: string, name: string, author: string, description: string }) => (
 				<div key={book.id} className="bg-white shadow-md rounded-lg p-6 mb-6 relative">
 					<div className="flex justify-between items-start">
