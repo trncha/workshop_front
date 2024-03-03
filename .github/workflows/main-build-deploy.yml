@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      NEXT_PUBLIC_API_URL: https://backend-nz4jxdcc7a-as.a.run.app
+      NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
 
     steps:
       - uses: actions/checkout@v2
@@ -45,7 +45,7 @@ jobs:
       - name: build and push docker image
         env:
           GOOGLE_PROJECT: ${{ secrets.GOOGLE_PROJECT }}
-          NEXT_PUBLIC_API_URL: https://backend-nz4jxdcc7a-as.a.run.app
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
         run: |
           gcloud auth configure-docker asia-southeast1-docker.pkg.dev
           docker build --build-arg NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL} -t asia-southeast1-docker.pkg.dev/myworkshop-416015/workshop-repo/frontend:latest .
