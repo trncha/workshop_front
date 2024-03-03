@@ -1,6 +1,8 @@
 # Stage 1: Building the application
 FROM node:18-alpine AS builder
 
+ARG NEXT_PUBLIC_API_URL
+
 WORKDIR /usr/src/app
 
 COPY package*.json ./
