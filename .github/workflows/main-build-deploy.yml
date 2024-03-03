@@ -12,6 +12,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
@@ -20,40 +21,32 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Run Tests
+      # Assuming npm run test:ci runs tests that don't require the actual backend API
+      - name: Run Tests Without Backend
         run: npm run test:ci
 
       - name: Build Next.js App
         run: npm run build
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
 
-      - name: code checkout
+  deploy:
+    needs: build # This job needs to succeed before deployment starts
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' # This ensures deployment happens only on the main branch
+    steps:
+      - name: Code Checkout
         uses: actions/checkout@v2
 
-      - name: install the cloud cli
+      - name: Install the Cloud CLI
         uses: google-github-actions/setup-gcloud@v0
         with:
           project_id: ${{ secrets.GOOGLE_PROJECT }}
           service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
           export_default_credentials: true
-      
-      - name: build and push docker image
+
+      - name: Build and Push Docker Image
         env:
           GOOGLE_PROJECT: ${{ secrets.GOOGLE_PROJECT }}
         run: |
           gcloud auth configure-docker asia-southeast1-docker.pkg.dev
           docker build -t asia-southeast1-docker.pkg.dev/myworkshop-416015/workshop-repo/frontend:latest .
           docker push asia-southeast1-docker.pkg.dev/myworkshop-416015/workshop-repo/frontend:latest
-      # - name: Deploy to Cloud Run
-      #   env:
-      #     SERVICE_NAME: frontend	
-      #     IMAGE_URL: asia-southeast1-docker.pkg.dev/myworkshop-416015/workshop-repo/frontend:latest
-      #     REGION: asia-southeast1
-      #   run: |
-      #     gcloud run deploy $SERVICE_NAME \
-      #       --image $IMAGE_URL \
-      #       --region $REGION \
-      #       --platform managed \
-      #       --allow-unauthenticated
